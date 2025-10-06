@@ -16,13 +16,13 @@ public class MetaDataSourceConfig {
     @Primary
     @Bean
     @ConfigurationProperties(prefix = "spring.datasource.meta")
-    public DataSource metaDataSource() {
+    public DataSource dataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Primary
     @Bean
     public PlatformTransactionManager transactionManager() {
-        return new DataSourceTransactionManager(metaDataSource());
+        return new DataSourceTransactionManager(dataSource());
     }
 }
