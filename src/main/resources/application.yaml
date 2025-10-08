@@ -17,3 +17,13 @@ spring:
 #      jdbc-url:
 #      username:
 #      password:
+
+
+logging:
+  level:
+    com.megamaker.myportalnewsbatch: debug
+
+#api:
+#  naver:
+#    x-naver-client-id:
+#    x-naver-client-secret:

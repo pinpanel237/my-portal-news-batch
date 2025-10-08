@@ -1,8 +1,10 @@
 package com.megamaker.myportalnewsbatch.repository;
 
-import com.megamaker.myportalnewsbatch.domain.Article;
+import com.megamaker.myportalnewsbatch.domain.NaverArticle;
+
+import java.util.List;
 
 public interface NewsRepository {
 
-    long save(Article article);
+    int[] saveAll(List<NaverArticle> articleList);
 }
