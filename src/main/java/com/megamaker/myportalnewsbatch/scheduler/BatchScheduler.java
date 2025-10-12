@@ -30,7 +30,7 @@ public class BatchScheduler {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
                     .addLong("id", System.currentTimeMillis())
-                            .toJobParameters();
+                    .toJobParameters();
 
             jobLauncher.run(jobRegistry.getJob("newsJob"), jobParameters);
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException |

@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -22,6 +21,7 @@ public class NaverArticle {
 
     @Builder
     public NaverArticle(String title, @JsonProperty("originallink") String originalLink, String description, String pubDate) {
+        // 네이버에서 검색어에 볼드처리 태그 달아서 없애줌
         this.title = title.replaceAll("</*b>", "").replace("&quot;", "\"");
         this.originalLink = originalLink;
         this.description = description.replaceAll("</*b>", "").replace("&quot;", "\"");

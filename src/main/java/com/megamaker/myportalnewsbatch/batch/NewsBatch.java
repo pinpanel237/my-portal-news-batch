@@ -38,9 +38,10 @@ public class NewsBatch {
     private String xNaverClientSecret;
 
     @Bean
-    public Job newsJob(Step naverNewsStep) {
+    public Job newsJob(Step naverNewsStep, Step daumNewsStep) {
         return new JobBuilder("newsJob", jobRepository)
                 .start(naverNewsStep)
+                .next(daumNewsStep)
                 .build();
     }
 
@@ -48,7 +49,6 @@ public class NewsBatch {
     public Step naverNewsStep() {
         return new StepBuilder("naverNewsStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-
                     URI uri = UriComponentsBuilder
                             .fromUriString("https://openapi.naver.com/v1/search/news.json")
                             .queryParam("query", "오늘")  // 가능한 오늘 관련 뉴스만 가져오도록
@@ -79,4 +79,12 @@ public class NewsBatch {
                 .build();
     }
 
+    @Bean
+    public Step daumNewsStep() {
+        return new StepBuilder("daumNewsStep", jobRepository)
+                .tasklet(((contribution, chunkContext) -> {
+                    return RepeatStatus.FINISHED;
+                }), transactionManager)
+                .build();
+    }
 }
