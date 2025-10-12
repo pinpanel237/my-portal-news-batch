@@ -24,7 +24,8 @@ public class BatchScheduler {
         this.jobRegistry = jobRegistry;
     }
 
-    @Scheduled(cron = "0/5 * * * * *", zone = "Asia/Seoul")
+//    @Scheduled(cron = "0/5 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 9,15 * * *", zone = "Asia/Seoul")
     public void naverNewsBatchJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
