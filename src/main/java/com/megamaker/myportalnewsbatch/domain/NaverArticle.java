@@ -19,6 +19,8 @@ public class NaverArticle {
 
     private final Timestamp pubDate;
 
+    private final String source;
+
     @Builder
     public NaverArticle(String title, @JsonProperty("originallink") String originalLink, String description, String pubDate) {
         // 네이버에서 검색어에 볼드처리 태그 달아서 없애줌
@@ -30,6 +32,7 @@ public class NaverArticle {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
         ZonedDateTime zdt = ZonedDateTime.parse(pubDate, formatter);
         this.pubDate = Timestamp.from(zdt.toInstant());
+        this.source = "naver";
     }
 }
 

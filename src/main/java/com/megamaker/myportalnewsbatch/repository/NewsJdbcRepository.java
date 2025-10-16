@@ -19,7 +19,7 @@ public class NewsJdbcRepository implements NewsRepository {
 
     @Override
     public int[] saveAll(List<NaverArticle> articleList) {
-        String sql = "INSERT INTO news.articles (title, original_link, description, publish_date) VALUES(:title, :originalLink, :description, :pubDate);";
+        String sql = "INSERT INTO news.articles (title, original_link, description, publish_date, source) VALUES(:title, :originalLink, :description, :pubDate, :source);";
         SqlParameterSource[] sqlParameterSource = SqlParameterSourceUtils.createBatch(articleList.toArray());
         return jdbcTemplate.batchUpdate(sql, sqlParameterSource);
     }
