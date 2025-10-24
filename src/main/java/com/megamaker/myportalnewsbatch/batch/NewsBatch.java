@@ -78,7 +78,7 @@ public class NewsBatch {
                     }
 
                     List<Article> articleList = items.stream()
-                            .map(NaverApi::toArticle)
+                            .map(NaverApi.NaverArticle::toArticle)
                             .toList();
 
                     newsRepository.saveAll(articleList);

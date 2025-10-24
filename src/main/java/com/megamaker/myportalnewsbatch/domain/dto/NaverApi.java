@@ -2,10 +2,8 @@ package com.megamaker.myportalnewsbatch.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.megamaker.myportalnewsbatch.domain.Article;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import com.megamaker.myportalnewsbatch.domain.ArticleConvertible;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.time.ZonedDateTime;
@@ -15,47 +13,50 @@ import java.util.Locale;
 
 @ToString
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class NaverApi {
-    private final String lastBuildDate;
-    private final Integer total;
-    private final Integer start;
-    private final Integer display;
-    private final List<NaverArticle> items;
-
-    public static Article toArticle(NaverArticle naverArticle) {
-        return Article.builder()
-                .title(naverArticle.getTitle())
-                .originalLink(naverArticle.getOriginalLink())
-                .description(naverArticle.getDescription())
-                .pubDate(naverArticle.getPubDate())
-                .source("naver")
-                .build();
-    }
+    private String lastBuildDate;
+    private Integer total;
+    private Integer start;
+    private Integer display;
+    private List<NaverArticle> items;
 
     @Getter
-    public static class NaverArticle {
-        private final String title;
+    @NoArgsConstructor
+    public static class NaverArticle implements ArticleConvertible {
+        private String title;
 
-        private final String originalLink;
+        private String originalLink;
 
-        private final String description;
+        private String description;
 
-        private final Timestamp pubDate;
+        private Timestamp pubDate;
+
+        private static final DateTimeFormatter NAVER_DATE_FORMATTER =
+                DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
 
         @Builder
         public NaverArticle(String title, @JsonProperty("originallink") String originalLink,
                             String description, String pubDate) {
             // 네이버에서 검색어에 볼드처리 태그 달아서 없애줌
-            this.title = title.replaceAll("</*b>", "").replace("&quot;", "\"");
-            this.description = description.replaceAll("</*b>", "").replace("&quot;", "\"");
+            this.title = title.replaceAll("</?b>", "").replace("&quot;", "\"");
+            this.description = description.replaceAll("</?b>", "").replace("&quot;", "\"");
             this.originalLink = originalLink;
 
             // 날짜 timestamp 형식으로 변경
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
-            ZonedDateTime zdt = ZonedDateTime.parse(pubDate, formatter);
+            ZonedDateTime zdt = ZonedDateTime.parse(pubDate, NAVER_DATE_FORMATTER);
             this.pubDate = Timestamp.from(zdt.toInstant());
         }
-    }
 
+        @Override
+        public Article toArticle() {
+            return Article.builder()
+                    .title(this.getTitle())
+                    .originalLink(this.getOriginalLink())
+                    .description(this.getDescription())
+                    .pubDate(this.getPubDate())
+                    .source("naver")
+                    .build();
+        }
+    }
 }
