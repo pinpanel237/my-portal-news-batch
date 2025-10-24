@@ -1,6 +1,6 @@
 package com.megamaker.myportalnewsbatch.batch;
 
-import com.megamaker.myportalnewsbatch.domain.NaverArticle;
+import com.megamaker.myportalnewsbatch.domain.Article;
 import com.megamaker.myportalnewsbatch.domain.dto.NaverApi;
 import com.megamaker.myportalnewsbatch.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,16 +64,26 @@ public class NewsBatch {
                             .build();
 
                     ResponseEntity<NaverApi> result = restTemplate.exchange(request, NaverApi.class);
-                    List<NaverArticle> items = result.getBody().getItems();
+                    NaverApi responseBody = result.getBody();
 
-                    // 응답 내용이 비어있지 않을 때
-                    if (items != null && !items.isEmpty()) {
-                        newsRepository.saveAll(items);  // 뉴스 기사 저장
-                        log.debug("네이버 뉴스 저장 성공!");
-                    } else {
-                        log.error("네이버 뉴스 API 요청에 실패했습니다.");
-                        log.error(result.getBody().toString());
+                    if (responseBody == null) {
+                        log.error("네이버 뉴스 API 응답이 비어있습니다.");
+                        return RepeatStatus.FINISHED;
                     }
+
+                    List<NaverApi.NaverArticle> items = responseBody.getItems();
+                    if (items == null || items.isEmpty()) {
+                        log.warn("네이버 뉴스 API 응답에 기사가 없습니다. Response: {}", responseBody);
+                        return RepeatStatus.FINISHED;
+                    }
+
+                    List<Article> articleList = items.stream()
+                            .map(NaverApi::toArticle)
+                            .toList();
+
+                    newsRepository.saveAll(articleList);
+                    log.info("네이버 뉴스 {}건 저장 성공!", articleList.size());
+
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();
@@ -83,6 +93,8 @@ public class NewsBatch {
     public Step daumNewsStep() {
         return new StepBuilder("daumNewsStep", jobRepository)
                 .tasklet(((contribution, chunkContext) -> {
+                    // todo 다음 뉴스 기사 가져오기 구현
+
                     return RepeatStatus.FINISHED;
                 }), transactionManager)
                 .build();

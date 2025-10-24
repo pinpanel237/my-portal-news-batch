@@ -1,6 +1,6 @@
 package com.megamaker.myportalnewsbatch.repository;
 
-import com.megamaker.myportalnewsbatch.domain.NaverArticle;
+import com.megamaker.myportalnewsbatch.domain.Article;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -18,9 +18,9 @@ public class NewsJdbcRepository implements NewsRepository {
     }
 
     @Override
-    public int[] saveAll(List<NaverArticle> articleList) {
+    public void saveAll(List<Article> articleList) {
         String sql = "INSERT INTO news.articles (title, original_link, description, publish_date, source) VALUES(:title, :originalLink, :description, :pubDate, :source);";
         SqlParameterSource[] sqlParameterSource = SqlParameterSourceUtils.createBatch(articleList.toArray());
-        return jdbcTemplate.batchUpdate(sql, sqlParameterSource);
+        jdbcTemplate.batchUpdate(sql, sqlParameterSource);
     }
 }
