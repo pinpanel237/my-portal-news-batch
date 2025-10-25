@@ -1,0 +1,13 @@
+services:
+  jenkins-all-in-one:
+    image: "jenkins:all-in-one"  # 사전에 이미지 생성해야 함 (Git + Gradle + JDK)
+    container_name: "jenkins-all-in-one"
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
+volumes:
+  jenkins_home:
+    name: "jenkins_home"
